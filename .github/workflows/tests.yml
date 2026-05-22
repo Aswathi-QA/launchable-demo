@@ -1,4 +1,4 @@
-name: Run BDD Tests (Selenium)
+name: Run BDD Tests with Launchable
 
 on:
   push:
@@ -21,6 +21,15 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Run Behave tests
+      - name: Launchable login
+        env:
+          LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
         run: |
-          behave
+          launchable login
+
+      # ✅ Training phase: record full test run
+      - name: Record tests in Launchable
+        env:
+          LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
+        run: |
+          launchable record tests behave
