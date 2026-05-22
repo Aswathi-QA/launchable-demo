@@ -15,4 +15,3 @@ def step_impl(context):
 @then('user should be redirected to login page')
 def step_impl(context):
     assert "login" in context.driver.current_url
-    context.driver.quit()

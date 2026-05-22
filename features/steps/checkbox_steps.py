@@ -14,4 +14,4 @@ def step_impl(context):
 def step_impl(context):
     checkbox = context.driver.find_elements(By.CSS_SELECTOR, "input[type='checkbox']")[0]
     assert checkbox.is_selected()
-    context.driver.quit()
+   

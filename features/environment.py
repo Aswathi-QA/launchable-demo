@@ -1,5 +1,10 @@
-def before_all(context):
-    print("Starting BDD Tests...")
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
 
-def after_all(context):
-    print("Tests Completed.")
+def before_scenario(context, scenario):
+    options = Options()
+    options.add_argument("--headless")
+    context.driver = webdriver.Firefox(options=options)
+
+def after_scenario(context, scenario):
+    context.driver.quit()

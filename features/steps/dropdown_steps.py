@@ -15,4 +15,4 @@ def step_impl(context):
 def step_impl(context):
     selected = context.driver.find_element(By.CSS_SELECTOR, "#dropdown option:checked").text
     assert selected == "Option 2"
-    context.driver.quit()
+   

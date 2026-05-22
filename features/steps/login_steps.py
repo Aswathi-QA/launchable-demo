@@ -5,11 +5,6 @@ from selenium.webdriver.firefox.options import Options
 
 @given('user is on login page')
 def step_impl(context):
-    options = Options()
-    options.add_argument("--headless")
-
-    # ✅ Selenium Manager handles geckodriver
-    context.driver = webdriver.Firefox(options=options)
     context.driver.get("https://the-internet.herokuapp.com/login")
 
 @when('user enters valid username and password')
@@ -33,4 +28,4 @@ def step_impl(context):
 def step_impl(context):
     error = context.driver.find_element(By.ID, "flash").text
     assert "invalid" in error.lower()
-    context.driver.quit()
+  
