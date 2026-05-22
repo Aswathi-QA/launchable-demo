@@ -1,4 +1,4 @@
-name: Run BDD Tests with Launchable
+name: BDD Tests with Launchable (Record Phase)
 
 on:
   push:
@@ -9,17 +9,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      # 1️⃣ Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      # 2️⃣ Setup Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
+      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
 
-      # ✅ TRAINING MODE
+      # 4️⃣ Record build in Launchable
+      - name: Record build in Launchable
+        env:
+          LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
+        run: |
+          launchable record build --name github-actions-${{ github.run_id }}
+
+      # 5️⃣ Record full test run (training Launchable)
       - name: Record tests in Launchable
         env:
           LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
