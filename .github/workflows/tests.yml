@@ -31,9 +31,15 @@ jobs:
         run: |
           launchable record build --name github-actions-${{ github.run_id }}
 
-      # 5️⃣ Record full test run (training Launchable)
-      - name: Record tests in Launchable
+      # 5️⃣ Run Behave and generate JUnit report
+      - name: Run Behave tests and generate report
+        run: |
+          mkdir -p reports
+          behave -f junit -o reports/
+
+      # 6️⃣ Upload test results to Launchable ✅✅✅
+      - name: Record test results in Launchable
         env:
           LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
         run: |
-          launchable record tests behave
+          launchable record tests behave reports/
