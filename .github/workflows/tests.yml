@@ -9,35 +9,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2️⃣ Setup Python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
 
-      # 4️⃣ Record build in Launchable
+      # ✅ Record build in Launchable
       - name: Record build in Launchable
         env:
           LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
         run: |
           launchable record build --name github-actions-${{ github.run_id }}
 
-      # 5️⃣ Run Behave and generate JUnit report
+      # ✅ Run Behave and generate JUnit XML (CORRECT)
       - name: Run Behave tests and generate report
         run: |
           mkdir -p reports
-          behave -f junit -o reports/
+          behave --junit --junit-directory reports
 
-      # 6️⃣ Upload test results to Launchable ✅✅✅
+      # ✅ Upload reports to Launchable
       - name: Record test results in Launchable
         env:
           LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
