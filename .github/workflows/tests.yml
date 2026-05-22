@@ -35,11 +35,15 @@ jobs:
           behave --junit --junit-directory reports
                   
       # ✅ Run risk-based subset of tests (Prediction mode)
+      
       - name: Run subset of tests using Launchable
         env:
           LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
         run: |
-          launchable subset --target 50% behave
+          launchable subset \
+            --target 50% \
+            --get-tests-from-previous-sessions \
+            behave
 
       # ✅ Upload reports to Launchable
       # - name: Record test results in Launchable
