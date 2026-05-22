@@ -2,7 +2,7 @@ from behave import given, when, then
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
-avc
+
 @given('user is on login page')
 def step_impl(context):
     options = Options()
