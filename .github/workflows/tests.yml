@@ -33,13 +33,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Install Launchable CLI (pip version)
+      - name: Remove old Launchable CLI
+        run: |
+          sudo rm -f /usr/bin/launchable || true
+          sudo rm -f /usr/local/bin/launchable || true
+
+      - name: Install latest Launchable CLI
         run: |
           pip install --upgrade launchable
-          echo "Creating wrapper to force pip version"
-          sudo bash -c 'echo "#!/bin/bash" > /usr/local/bin/launchable'
-          sudo bash -c 'echo "$HOME/.local/bin/launchable \"\$@\"" >> /usr/local/bin/launchable'
-          sudo chmod +x /usr/local/bin/launchable
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Verify Launchable version
         run: launchable --version
