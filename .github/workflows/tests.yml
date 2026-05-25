@@ -33,12 +33,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Remove old Launchable CLI
-        run: |
-          sudo rm -f /usr/bin/launchable || true
-          sudo rm -f /usr/local/bin/launchable || true
-
-      - name: Install latest Launchable CLI
+      - name: Install Launchable CLI (pip)
         run: |
           pip install --upgrade launchable
           echo "$HOME/.local/bin" >> $GITHUB_PATH
@@ -63,4 +58,4 @@ jobs:
         env:
           LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
         run: |
-          launchable record tests junit --base reports reports/*.xml
+          launchable record tests --source reports
