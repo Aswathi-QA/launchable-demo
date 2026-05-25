@@ -30,24 +30,24 @@ jobs:
 
       - name: Create virtual environment
         run: |
-          python -m venv venv
-          echo "$PWD/venv/bin" >> $GITHUB_PATH
+          python -m venv ${{ github.workspace }}/venv
 
       - name: Install Python dependencies
         run: |
-          venv/bin/pip install --upgrade pip
-          venv/bin/pip install -r requirements.txt
+          ${{ github.workspace }}/venv/bin/pip install --upgrade pip
+          ${{ github.workspace }}/venv/bin/pip install -r requirements.txt
 
-      - name: Install Launchable CLI (modern version)
+      - name: Install Launchable CLI
         run: |
-          venv/bin/pip install --upgrade launchable
+          ${{ github.workspace }}/venv/bin/pip install --upgrade launchable
 
       - name: Verify Launchable version
-        run: venv/bin/python -m launchable --version
+        run: |
+          ${{ github.workspace }}/venv/bin/python -m launchable --version
 
       - name: Run Behave tests
         run: |
-          venv/bin/python -m behave features/ --junit --junit-directory reports
+          ${{ github.workspace }}/venv/bin/python -m behave features/ --junit --junit-directory reports
 
       - name: List reports
         run: ls -R reports
@@ -56,10 +56,10 @@ jobs:
         env:
           LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
         run: |
-          venv/bin/python -m launchable record build --name "$GITHUB_SHA"
+          ${{ github.workspace }}/venv/bin/python -m launchable record build --name "$GITHUB_SHA"
 
       - name: Launchable record tests
         env:
           LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
         run: |
-          venv/bin/python -m launchable record tests junit --base reports reports/*.xml
+          ${{ github.workspace }}/venv/bin/python -m launchable record tests junit --base reports reports/*.xml
