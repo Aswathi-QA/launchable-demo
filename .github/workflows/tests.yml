@@ -40,6 +40,10 @@ jobs:
       - name: List reports
         run: ls -R reports
 
+      - name: Install Launchable CLI
+        run: |
+          pip install --upgrade launchable
+
       - name: Launchable record build
         env:
           LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
@@ -50,4 +54,5 @@ jobs:
         env:
           LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
         run: |
-          launchable record tests reports
+          launchable record tests junit --base reports reports/*.xml
+s
