@@ -33,16 +33,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Install Launchable CLI
+        run: |
+          pip install --upgrade launchable
+
       - name: Run Behave tests
         run: |
           python -m behave features/ --junit --junit-directory reports
 
       - name: List reports
         run: ls -R reports
-
-      - name: Install Launchable CLI
-        run: |
-          pip install --upgrade launchable
 
       - name: Launchable record build
         env:
@@ -55,4 +55,3 @@ jobs:
           LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
         run: |
           launchable record tests junit --base reports reports/*.xml
-s
