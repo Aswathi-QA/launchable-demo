@@ -74,6 +74,14 @@ jobs:
             --junit \
             --junit-directory reports \
             features/
+      
+      - name: Debug JUnit XML
+        run: |
+          echo "XML files:"
+          ls -l reports
+          echo "Preview first XML:"
+          head -n 50 reports/*.xml
+
 
       - name: Debug reports folder
         run: |
