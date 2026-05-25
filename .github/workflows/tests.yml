@@ -71,7 +71,7 @@ jobs:
         run: |
           mkdir -p reports
           "${{ github.workspace }}/venv/bin/python3" -m behave \
-            --format junit2 \
+            --format junit \
             --outfile reports/results.xml \
             features/
 
