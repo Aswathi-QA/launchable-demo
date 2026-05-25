@@ -1,78 +1,49 @@
-name: BDD Tests with Launchable
+name: Run Behave Tests
 
 on:
   push:
-  workflow_dispatch:
+  pull_request:
 
 jobs:
-  bdd-tests:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-      # -----------------------------
-      # 1. Checkout with full history
-      # -----------------------------
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0   # FIX: no shallow clone
 
-      # -----------------------------
-      # 2. Python setup
-      # -----------------------------
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.10"
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      # -----------------------------
-      # 3. Record build in Launchable
-      # -----------------------------
-      - name: Record build in Launchable
-        env:
-          LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
+      - name: Install system dependencies (Firefox + GeckoDriver)
         run: |
-          launchable record build \
-            --name github-actions-${{ github.run_id }}
+          sudo add-apt-repository ppa:mozillateam/ppa -y
+          echo '
+          Package: *
+          Pin: release o=LP-PPA-mozillateam
+          Pin-Priority: 1001
+          ' | sudo tee /etc/apt/preferences.d/mozilla-firefox
+          sudo apt update
+          sudo apt install -y firefox firefox-geckodriver
 
-      # ---------------------------------------------------------
-      # 4. (OPTIONAL) Predictive subset — ENABLE ONLY WHEN READY
-      # ---------------------------------------------------------
-      # - name: Get subset from Launchable
-      #   env:
-      #     LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
-      #   run: |
-      #     launchable subset \
-      #       --target 50% \
-      #       behave features/ > subset.txt
-      #
-      # - name: Run subset
-      #   run: |
-      #     behave @subset.txt \
-      #       --junit --junit-directory reports
-
-      # ---------------------------------------------------------
-      # 5. TEMP: Run full suite until Launchable model is ready
-      # ---------------------------------------------------------
-      - name: Run all Behave tests
+      - name: Install Python dependencies
         run: |
-          mkdir -p reports
-          behave features/ --junit --junit-directory reports
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      # Debug: verify XML files exist
-      - name: Debug reports folder
+      - name: Run Behave tests
+        run: |
+          python -m behave features/ --junit --junit-directory reports
+
+      - name: List reports
         run: ls -R reports
 
-      # ---------------------------------------------------------
-      # 6. Record test results (with test suite name)
-      # ---------------------------------------------------------
-      - name: Record test results in Launchable
-        env:
-          LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
+      - name: Launchable record build
         run: |
-          launchable record tests \
-            --test-suite "bdd" \
-            behave reports/
+          launchable record build --name "$GITHUB_SHA"
+
+      - name: Launchable record tests
+        run: |
+          launchable record tests --base reports "reports/*.xml"
