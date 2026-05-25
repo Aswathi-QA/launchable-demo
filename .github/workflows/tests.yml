@@ -43,3 +43,44 @@ jobs:
 
           firefox --version
           geckodriver --version
+
+      - name: Create virtual environment
+        run: |
+          python -m venv "${{ github.workspace }}/venv"
+          ls -la "${{ github.workspace }}/venv/bin"
+
+      - name: Install Python dependencies
+        run: |
+          "${{ github.workspace }}/venv/bin/pip3" install --upgrade pip
+          "${{ github.workspace }}/venv/bin/pip3" install -r requirements.txt
+
+      - name: Install Launchable CLI
+        run: |
+          "${{ github.workspace }}/venv/bin/pip3" install --upgrade launchable
+
+      - name: Run Behave tests (force JUnit XML)
+        run: |
+          mkdir -p reports
+          "${{ github.workspace }}/venv/bin/python3" -m behave \
+            --format junit \
+            --outfile reports/results.xml \
+            features/
+
+      - name: Debug reports folder
+        run: |
+          echo "Reports directory content:"
+          ls -R "${{ github.workspace }}/reports"
+
+      - name: Launchable record build
+        env:
+          LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
+        run: |
+          "${{ github.workspace }}/venv/bin/python3" -m launchable record build --name "$GITHUB_SHA"
+
+      - name: Launchable record tests
+        env:
+          LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
+        run: |
+          "${{ github.workspace }}/venv/bin/python3" -m launchable record tests junit \
+            --base reports \
+            reports/results.xml
