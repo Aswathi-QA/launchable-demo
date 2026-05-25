@@ -90,8 +90,7 @@ jobs:
         env:
           LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
         run: |
-          "${{ github.workspace }}/venv/bin/python3" -m launchable record tests behave \
-            --base reports \
-            -- \
-            reports/results.xml
+          "/home/runner/work/launchable-demo/launchable-demo/venv/bin/python3" \
+          -m launchable record tests behave reports/results.xml
+
 
