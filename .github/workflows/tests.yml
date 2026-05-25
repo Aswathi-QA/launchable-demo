@@ -44,10 +44,16 @@ jobs:
           firefox --version
           geckodriver --version
 
+      - name: Remove old venv if exists
+        run: |
+          rm -rf "${{ github.workspace }}/venv"
+
       - name: Create virtual environment
         run: |
           python -m venv "${{ github.workspace }}/venv"
           ls -la "${{ github.workspace }}/venv/bin"
+
+      
 
       - name: Install Python dependencies
         run: |
