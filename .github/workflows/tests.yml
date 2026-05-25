@@ -60,7 +60,11 @@ jobs:
       - name: Run all Behave tests
         run: |
           mkdir -p reports
-          behave --junit --junit-directory reports
+          behave features/ --junit --junit-directory reports
+
+      # Debug: verify XML files exist
+      - name: Debug reports folder
+        run: ls -R reports
 
       # ---------------------------------------------------------
       # 6. Record test results (with test suite name)
