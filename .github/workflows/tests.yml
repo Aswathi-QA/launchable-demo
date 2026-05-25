@@ -85,23 +85,21 @@ jobs:
           ls -R "${{ github.workspace }}/reports"
   
       - name: Install/Upgrade Launchable CLI
-      run: |
-        "${{ github.workspace }}/venv/bin/pip3" install --upgrade --force-reinstall launchable
+        run: |
+          "${{ github.workspace }}/venv/bin/pip3" install --upgrade --force-reinstall launchable
 
-        - name: Check Launchable version
-          run: |
-            "${{ github.workspace }}/venv/bin/python3" -m launchable --version
+      - name: Check Launchable version
+        run: |
+          "${{ github.workspace }}/venv/bin/python3" -m launchable --version
 
-        - name: Launchable record build
-          env:
-            LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
-          run: |
-            "${{ github.workspace }}/venv/bin/python3" -m launchable record build \
-              --name github \
-              --build ${{ github.run_id }}
+      - name: Launchable record build
+        env:
+          LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
+        run: |
+          "${{ github.workspace }}/venv/bin/python3" -m launchable record build --name github --build ${{ github.run_id }}
 
-        - name: Launchable record tests
-          env:
-            LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
-          run: |
-            "${{ github.workspace }}/venv/bin/python3" -m launchable record tests behave reports/*.xml
+      - name: Launchable record tests
+        env:
+          LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
+        run: |
+          "${{ github.workspace }}/venv/bin/python3" -m launchable record tests behave reports/*.xml
