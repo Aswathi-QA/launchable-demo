@@ -50,5 +50,4 @@ jobs:
         env:
           LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
         run: |
-          launchable record tests file --base reports reports/*.xml
-
+          launchable record tests reports
