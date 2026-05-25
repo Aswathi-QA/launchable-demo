@@ -23,31 +23,33 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Install Firefox + GeckoDriver (Ubuntu 24.04 safe)
+      - name: Install Firefox
         run: |
           sudo apt update
           sudo apt install -y wget tar xz-utils curl
-
-          # Install Firefox from Mozilla tarball (no snap)
           wget -O firefox.tar.xz "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US"
           tar -xf firefox.tar.xz
           sudo mv firefox /opt/firefox
           sudo ln -sf /opt/firefox/firefox /usr/local/bin/firefox
+          firefox --version
 
-          # Install GeckoDriver (YAML‑safe parsing)
+
+      - name: Install GeckoDriver
+        run: |
           GECKO_VERSION=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest | grep '"tag_name"' | awk -F'"' '{print $4}')
           wget -q "https://github.com/mozilla/geckodriver/releases/download/$GECKO_VERSION/geckodriver-$GECKO_VERSION-linux64.tar.gz"
           tar -xzf geckodriver-*-linux64.tar.gz
           sudo mv geckodriver /usr/local/bin/
           sudo chmod +x /usr/local/bin/geckodriver
+          geckodriver --version
+
 
           firefox --version
           geckodriver --version
 
 
       - name: Remove old venv if exists
-        run: |
-          rm -rf "${{ github.workspace }}/venv"
+        run: rm -rf "${{ github.workspace }}/venv"
 
       - name: Create virtual environment
         run: |
