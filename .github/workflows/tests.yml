@@ -90,6 +90,6 @@ jobs:
         env:
           LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
         run: |
-          "${{ github.workspace }}/venv/bin/python3" -m launchable record tests junit \
+          "${{ github.workspace }}/venv/bin/python3" -m launchable record tests \
             --base reports \
             reports/results.xml
