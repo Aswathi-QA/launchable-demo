@@ -91,6 +91,6 @@ jobs:
           LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
         run: |
           "/home/runner/work/launchable-demo/launchable-demo/venv/bin/python3" \
-          -m launchable record tests behave reports/results.xml
+            -m launchable record tests behave reports/*.xml
 
 
