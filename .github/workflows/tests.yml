@@ -12,12 +12,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Debug working directory
-        run: |
-          echo "PWD is: $PWD"
-          echo "Workspace is: ${{ github.workspace }}"
-          ls -la
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -26,11 +20,11 @@ jobs:
       - name: Install Firefox + GeckoDriver (Ubuntu 24.04 safe)
         run: |
           sudo apt update
-          sudo apt install -y wget tar xz-utils
+          sudo apt install -y wget tar xz-utils curl
 
           # Install Firefox from Mozilla tarball (no snap)
-          wget -O firefox.tar.bz2 "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US"
-          tar -xjf firefox.tar.bz2
+          wget -O firefox.tar.xz "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US"
+          tar -xf firefox.tar.xz
           sudo mv firefox /opt/firefox
           sudo ln -sf /opt/firefox/firefox /usr/local/bin/firefox
 
@@ -48,7 +42,6 @@ jobs:
       - name: Create virtual environment
         run: |
           python -m venv "${{ github.workspace }}/venv"
-          ls -la "${{ github.workspace }}/venv"
 
       - name: Install Python dependencies
         run: |
