@@ -1,4 +1,4 @@
-name: BDD Tests with Launchable (Record Phase)
+name: BDD Tests with Launchable
 
 on:
   push:
@@ -9,47 +9,66 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # -----------------------------
+      # 1. Checkout with full history
+      # -----------------------------
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # FIX: no shallow clone
 
+      # -----------------------------
+      # 2. Python setup
+      # -----------------------------
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
-      # ✅ Record build in Launchable
+      # -----------------------------
+      # 3. Record build in Launchable
+      # -----------------------------
       - name: Record build in Launchable
         env:
           LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
         run: |
-          launchable record build --name github-actions-${{ github.run_id }}
+          launchable record build \
+            --name github-actions-${{ github.run_id }}
 
-      # ✅ Run Behave and generate JUnit XML (CORRECT)
-      - name: Run Behave tests and generate report
-        run: |
-          mkdir -p reports
-          behave --junit --junit-directory reports
-                  
-      # ✅ Run risk-based subset of tests (Prediction mode)
-      
-      - name: Run subset of tests using Launchable
-        env:
-          LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
-        run: |
-          launchable subset \
-            --target 50% \
-            --get-tests-from-previous-sessions \
-            behave
-
-      # ✅ Upload reports to Launchable
-      # - name: Record test results in Launchable
+      # ---------------------------------------------------------
+      # 4. (OPTIONAL) Predictive subset — ENABLE ONLY WHEN READY
+      # ---------------------------------------------------------
+      # - name: Get subset from Launchable
       #   env:
       #     LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
       #   run: |
-      #     launchable record tests behave reports/
-      
-      
+      #     launchable subset \
+      #       --target 50% \
+      #       behave features/ > subset.txt
+      #
+      # - name: Run subset
+      #   run: |
+      #     behave @subset.txt \
+      #       --junit --junit-directory reports
+
+      # ---------------------------------------------------------
+      # 5. TEMP: Run full suite until Launchable model is ready
+      # ---------------------------------------------------------
+      - name: Run all Behave tests
+        run: |
+          mkdir -p reports
+          behave --junit --junit-directory reports
+
+      # ---------------------------------------------------------
+      # 6. Record test results (with test suite name)
+      # ---------------------------------------------------------
+      - name: Record test results in Launchable
+        env:
+          LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
+        run: |
+          launchable record tests \
+            --test-suite "bdd" \
+            behave reports/
