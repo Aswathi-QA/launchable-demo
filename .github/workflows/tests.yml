@@ -12,6 +12,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Debug working directory
+        run: |
+          echo "PWD is: $PWD"
+          echo "Workspace is: ${{ github.workspace }}"
+          ls -la
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -19,18 +25,13 @@ jobs:
 
       - name: Install system dependencies (Firefox + GeckoDriver)
         run: |
-          sudo add-apt-repository ppa:mozillateam/ppa -y
-          echo '
-          Package: *
-          Pin: release o=LP-PPA-mozillateam
-          Pin-Priority: 1001
-          ' | sudo tee /etc/apt/preferences.d/mozilla-firefox
           sudo apt update
           sudo apt install -y firefox firefox-geckodriver
 
       - name: Create virtual environment
         run: |
           python -m venv "${{ github.workspace }}/venv"
+          ls -la "${{ github.workspace }}/venv"
 
       - name: Install Python dependencies
         run: |
