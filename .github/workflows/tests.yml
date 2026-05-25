@@ -33,12 +33,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Install Launchable CLI
+      - name: Install Launchable CLI (pip version)
         run: |
           pip install --upgrade launchable
+          echo "Creating wrapper to force pip version"
+          sudo bash -c 'echo "#!/bin/bash" > /usr/local/bin/launchable'
+          sudo bash -c 'echo "$HOME/.local/bin/launchable \"\$@\"" >> /usr/local/bin/launchable'
+          sudo chmod +x /usr/local/bin/launchable
 
-      - name: Add pip bin to PATH
-        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+      - name: Verify Launchable version
+        run: launchable --version
 
       - name: Run Behave tests
         run: |
