@@ -50,5 +50,4 @@ jobs:
         env:
           LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
         run: |
-          launchable record tests junit --base reports reports/*.xml
-
+          launchable record tests --base reports reports/*.xml
