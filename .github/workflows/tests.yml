@@ -37,6 +37,9 @@ jobs:
         run: |
           pip install --upgrade launchable
 
+      - name: Add pip bin to PATH
+        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+
       - name: Run Behave tests
         run: |
           python -m behave features/ --junit --junit-directory reports
