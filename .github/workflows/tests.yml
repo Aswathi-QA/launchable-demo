@@ -12,6 +12,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Debug working directory
+        run: |
+          echo "PWD: $PWD"
+          echo "Workspace: ${{ github.workspace }}"
+          ls -la
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -35,13 +41,13 @@ jobs:
           sudo mv geckodriver /usr/local/bin/
           sudo chmod +x /usr/local/bin/geckodriver
 
-          # Verify
           firefox --version
           geckodriver --version
 
       - name: Create virtual environment
         run: |
           python -m venv "${{ github.workspace }}/venv"
+          ls -la "${{ github.workspace }}/venv"
 
       - name: Install Python dependencies
         run: |
