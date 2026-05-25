@@ -22,7 +22,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
-
+  
       - name: Install Firefox
         run: |
           sudo apt update
@@ -33,19 +33,19 @@ jobs:
           sudo ln -sf /opt/firefox/firefox /usr/local/bin/firefox
           firefox --version
 
+      - name: Install jq
+        run: sudo apt-get install -y jq
+      
 
       - name: Install GeckoDriver
         run: |
-          GECKO_VERSION=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest | grep '"tag_name"' | awk -F'"' '{print $4}')
+          GECKO_VERSION=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest | jq -r '.tag_name')
           wget -q "https://github.com/mozilla/geckodriver/releases/download/$GECKO_VERSION/geckodriver-$GECKO_VERSION-linux64.tar.gz"
           tar -xzf geckodriver-*-linux64.tar.gz
           sudo mv geckodriver /usr/local/bin/
           sudo chmod +x /usr/local/bin/geckodriver
           geckodriver --version
 
-
-          firefox --version
-          geckodriver --version
 
 
       - name: Remove old venv if exists
