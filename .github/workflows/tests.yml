@@ -71,8 +71,8 @@ jobs:
         run: |
           mkdir -p reports
           "${{ github.workspace }}/venv/bin/python3" -m behave \
-            --format junit \
-            --outfile reports/results.xml \
+            --junit \
+            --junit-directory reports \
             features/
 
       - name: Debug reports folder
