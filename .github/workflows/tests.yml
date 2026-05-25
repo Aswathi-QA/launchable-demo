@@ -100,7 +100,10 @@ jobs:
         env:
           LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
         run: |
-          "${{ github.workspace }}/venv/bin/python3" -m launchable record build --name "$GITHUB_SHA"
+          "${{ github.workspace }}/venv/bin/python3" -m launchable record build \
+            --name github \
+            --build ${{ github.run_id }}
+
 
       - name: Launchable record tests
         env:
