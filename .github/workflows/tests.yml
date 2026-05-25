@@ -41,9 +41,13 @@ jobs:
         run: ls -R reports
 
       - name: Launchable record build
+        env:
+          LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
         run: |
           launchable record build --name "$GITHUB_SHA"
 
       - name: Launchable record tests
+        env:
+          LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
         run: |
           launchable record tests --base reports "reports/*.xml"
