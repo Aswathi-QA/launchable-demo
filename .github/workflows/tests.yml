@@ -28,55 +28,9 @@ jobs:
           sudo apt update
           sudo apt install -y wget tar xz-utils curl
 
-          # Install Firefox from Mozilla tarball (no snap)
           wget -O firefox.tar.xz "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US"
           tar -xf firefox.tar.xz
           sudo mv firefox /opt/firefox
           sudo ln -sf /opt/firefox/firefox /usr/local/bin/firefox
 
-          # Install GeckoDriver
-          GECKO_VERSION=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest | grep tag_name | cut -d '"' -f 4)
-          wget -q "https://github.com/mozilla/geckodriver/releases/download/$GECKO_VERSION/geckodriver-$GECKO_VERSION-linux64.tar.gz"
-          tar -xzf geckodriver-*-linux64.tar.gz
-          sudo mv geckodriver /usr/local/bin/
-          sudo chmod +x /usr/local/bin/geckodriver
-
-          firefox --version
-          geckodriver --version
-
-      - name: Create virtual environment
-        run: |
-          python -m venv "${{ github.workspace }}/venv"
-          ls -la "${{ github.workspace }}/venv/bin"
-
-      - name: Install Python dependencies
-        run: |
-          "${{ github.workspace }}/venv/bin/pip3" install --upgrade pip
-          "${{ github.workspace }}/venv/bin/pip3" install -r requirements.txt
-
-      - name: Install Launchable CLI
-        run: |
-          "${{ github.workspace }}/venv/bin/pip3" install --upgrade launchable
-
-      - name: Verify Launchable version
-        run: |
-          "${{ github.workspace }}/venv/bin/python3" -m launchable --version
-
-      - name: Run Behave tests
-        run: |
-          "${{ github.workspace }}/venv/bin/python3" -m behave features/ --junit --junit-directory reports
-
-      - name: List reports
-        run: ls -R reports
-
-      - name: Launchable record build
-        env:
-          LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
-        run: |
-          "${{ github.workspace }}/venv/bin/python3" -m launchable record build --name "$GITHUB_SHA"
-
-      - name: Launchable record tests
-        env:
-          LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
-        run: |
-          "${{ github.workspace }}/venv/bin/python3" -m launchable record tests junit --base reports reports/*.xml
+          GECKO_VERSION=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest | grep tag
