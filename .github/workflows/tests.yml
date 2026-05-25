@@ -63,15 +63,6 @@ jobs:
           "${{ github.workspace }}/venv/bin/pip3" install --upgrade pip
           "${{ github.workspace }}/venv/bin/pip3" install -r requirements.txt
 
-      - name: Install/Upgrade Launchable CLI
-        run: |
-          "${{ github.workspace }}/venv/bin/pip3" install --upgrade --force-reinstall launchable
-
-
-      - name: Check Launchable version
-        run: |
-          "${{ github.workspace }}/venv/bin/python3" -m launchable --version
-
       - name: Run Behave tests (JUnit XML)
         run: |
           mkdir -p reports
@@ -92,6 +83,14 @@ jobs:
         run: |
           echo "Reports directory content:"
           ls -R "${{ github.workspace }}/reports"
+  
+      - name: Install/Upgrade Launchable CLI
+        run: |
+          "${{ github.workspace }}/venv/bin/pip3" install --upgrade --force-reinstall launchable
+                
+      - name: Check Launchable version
+        run: |
+          "${{ github.workspace }}/venv/bin/python3" -m launchable --version
 
       - name: Launchable record build
         env:
@@ -106,7 +105,6 @@ jobs:
         env:
           LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
         run: |
-          "/home/runner/work/launchable-demo/launchable-demo/venv/bin/python3" \
-            -m launchable record tests behave reports/*.xml
+          "${{ github.workspace }}/venv/bin/python3" -m launchable record tests behave reports/*.xml
 
 
