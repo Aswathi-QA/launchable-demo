@@ -23,17 +23,29 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Install Firefox + GeckoDriver (Ubuntu 24.04 compatible)
+      - name: Install Firefox + GeckoDriver (no snap)
         run: |
+          # Install dependencies
           sudo apt update
-          sudo apt install -y firefox
+          sudo apt install -y libgtk-3-0 libdbus-glib-1-2 libxt6 libpci3 libasound2
 
+          # Download latest Firefox
+          FIREFOX_URL=$(curl -s https://api.github.com/repos/mozilla/gecko-dev/releases/latest | grep browser_download_url | grep linux-x86_64 | cut -d '"' -f 4)
+          wget -O firefox.tar.bz2 "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US"
+          tar -xjf firefox.tar.bz2
+          sudo mv firefox /opt/firefox
+          sudo ln -sf /opt/firefox/firefox /usr/local/bin/firefox
+
+          # Install GeckoDriver
           GECKO_VERSION=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest | grep tag_name | cut -d '"' -f 4)
           wget -q "https://github.com/mozilla/geckodriver/releases/download/$GECKO_VERSION/geckodriver-$GECKO_VERSION-linux64.tar.gz"
           tar -xzf geckodriver-*-linux64.tar.gz
           sudo mv geckodriver /usr/local/bin/
           sudo chmod +x /usr/local/bin/geckodriver
 
+          # Verify
+          firefox --version
+          geckodriver --version
 
       - name: Create virtual environment
         run: |
