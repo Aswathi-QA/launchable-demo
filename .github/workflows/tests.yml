@@ -63,13 +63,10 @@ jobs:
           "${{ github.workspace }}/venv/bin/pip3" install --upgrade pip
           "${{ github.workspace }}/venv/bin/pip3" install -r requirements.txt
 
-      - name: Install Launchable CLI
+      - name: Install/Upgrade Launchable CLI
         run: |
-          "${{ github.workspace }}/venv/bin/pip3" install --upgrade launchable
+          "${{ github.workspace }}/venv/bin/pip3" install --upgrade --force-reinstall launchable
 
-      - name: Upgrade Launchable CLI
-        run: |
-          "${{ github.workspace }}/venv/bin/pip" install --upgrade launchable
 
       - name: Check Launchable version
         run: |
