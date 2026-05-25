@@ -66,12 +66,12 @@ jobs:
       - name: Install Launchable CLI
         run: |
           "${{ github.workspace }}/venv/bin/pip3" install --upgrade launchable
-
-      - name: Run Behave tests (force JUnit XML)
+      
+      - name: Run Behave tests (JUnit XML)
         run: |
           mkdir -p reports
           "${{ github.workspace }}/venv/bin/python3" -m behave \
-            --format junit \
+            --format junit2 \
             --outfile reports/results.xml \
             features/
 
