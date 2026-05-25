@@ -35,7 +35,7 @@ jobs:
           sudo ln -sf /opt/firefox/firefox /usr/local/bin/firefox
 
           # Install GeckoDriver (YAML‑safe parsing)
-          GECKO_VERSION=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest | grep tag_name | cut -d \" -f 4)
+          GECKO_VERSION=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest | grep '"tag_name"' | awk -F'"' '{print $4}')
           wget -q "https://github.com/mozilla/geckodriver/releases/download/$GECKO_VERSION/geckodriver-$GECKO_VERSION-linux64.tar.gz"
           tar -xzf geckodriver-*-linux64.tar.gz
           sudo mv geckodriver /usr/local/bin/
@@ -43,6 +43,7 @@ jobs:
 
           firefox --version
           geckodriver --version
+
 
       - name: Remove old venv if exists
         run: |
