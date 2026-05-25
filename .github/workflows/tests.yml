@@ -66,6 +66,11 @@ jobs:
       - name: Install Launchable CLI
         run: |
           "${{ github.workspace }}/venv/bin/pip3" install --upgrade launchable
+
+      - name: Upgrade Launchable CLI
+        run: |
+          "${{ github.workspace }}/venv/bin/pip" install --upgrade launchable
+
       
       - name: Run Behave tests (JUnit XML)
         run: |
