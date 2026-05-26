@@ -60,7 +60,16 @@ jobs:
         run: python3 -m venv .venv
 
       - name: Activate venv for all steps
-        run: echo "PATH=${{ github.workspace }}/.venv/bin:$PATH" >> $GITHUB_ENV
+        run: echo "${{ github.workspace }}/.venv/bin" >> $GITHUB_PATH
+
+      
+      - name: Debug Python paths
+        run: |
+          which python3
+          which pip3
+          python3 --version
+          pip3 --version
+
 
       - name: Install Python dependencies
         run: |
