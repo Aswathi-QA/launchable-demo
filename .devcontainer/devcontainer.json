@@ -1,0 +1,27 @@
+{
+  "name": "Launchable Behave Dev Environment",
+
+  "image": "mcr.microsoft.com/devcontainers/python:3.10",
+
+  "features": {},
+
+  "postCreateCommand": [
+    "python -m venv venv",
+    "python -m ensurepip --upgrade",
+    "venv/bin/pip install --upgrade pip",
+    "venv/bin/pip install -r requirements.txt",
+    "venv/bin/pip install launchable"
+  ],
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "${workspaceFolder}/venv/bin/python",
+        "python.terminal.activateEnvironment": true
+      }
+    }
+  }
+}
