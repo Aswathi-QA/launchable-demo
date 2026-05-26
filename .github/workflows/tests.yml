@@ -1,172 +1,45 @@
-name: Run Behave Tests
+name: Run Behave Tests with Launchable
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout with full history (fixes Smart Tests warning)
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Debug working directory
-        run: |
-          echo "PWD: $PWD"
-          echo "Workspace: ${{ github.workspace }}"
-          ls -la
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
-  
-      - name: Install Firefox
+
+      - name: Install dependencies
         run: |
-          sudo apt update
-          sudo apt install -y wget tar xz-utils curl
-          wget -O firefox.tar.xz "https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US"
-          tar -xf firefox.tar.xz
-          sudo mv firefox /opt/firefox
-          sudo ln -sf /opt/firefox/firefox /usr/local/bin/firefox
-          firefox --version
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install launchable
 
-      - name: Install jq
-        run: sudo apt-get update && sudo apt-get install -y jq
-
-
-      - name: Install GeckoDriver
-        run: |
-          GECKO_VERSION=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest | jq -r '.tag_name')
-          wget -q "https://github.com/mozilla/geckodriver/releases/download/$GECKO_VERSION/geckodriver-$GECKO_VERSION-linux64.tar.gz"
-          tar -xzf geckodriver-*-linux64.tar.gz
-          sudo mv geckodriver /usr/local/bin/
-          sudo chmod +x /usr/local/bin/geckodriver
-          geckodriver --version
-
-
-
-      - name: Remove old venv if exists
-        run: rm -rf "${{ github.workspace }}/venv"
-
-      - name: Create virtual environment
-        run: python3 -m venv .venv
-
-      - name: Activate venv for all steps
-        run: echo "${{ github.workspace }}/.venv/bin" >> $GITHUB_PATH
-
-      
-      - name: Debug Python paths
-        run: |
-          which python3
-          which pip3
-          python3 --version
-          pip3 --version
-
-
-      - name: Install Python dependencies
-        run: |
-          pip3 install --upgrade pip
-          pip3 install -r requirements.txt
-
-      - name: Verify Behave dependencies
-        run: |
-          python3 - << 'EOF'
-          import colorama, parse, parse_type, six, tomli
-          print("All Behave dependencies import correctly")
-          EOF
-
-      - name: Remove corrupted Launchable installation
-        run: |
-          pip3 uninstall -y launchable || true
-          rm -rf ${{ github.workspace }}/.venv/lib/python*/site-packages/launchable*
-
-      - name: Install Launchable CLI (correct package)
-        run: |
-          pip3 uninstall -y launchable launchable-cli || true
-          rm -rf ${{ github.workspace }}/.venv/lib/python*/site-packages/launchable*
-          pip3 install --no-cache-dir launchable-cli
-
-
-      - name: Check Launchable version
-        run: launchable --version
-
-      - name: Debug Launchable plugin folder
-        run: |
-            python3 - << 'EOF'
-            import launchable, os
-            import launchable.plugins.record
-
-            print("Launchable module:", launchable.__file__)
-            print("Record plugin:", launchable.plugins.record.__file__)
-
-            plugin_dir = os.path.dirname(launchable.plugins.record.__file__)
-            print("\nRecord plugin contents:")
-            for f in os.listdir(plugin_dir):
-                print(" -", f)
-            EOF
-
-
-      - name: Launchable record build
+      - name: Record build in Launchable
         env:
           LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
         run: |
-          launchable record build --name github --build ${{ github.run_id }}
+          launchable record build --name github-actions-${{ github.run_id }}
 
-      - name: Debug Behave working directory
-        run: |
-          echo "PWD: $(pwd)"
-          echo "Contents:"
-          ls -la
-          echo "Features directory:"
-          ls -la features || echo "features/ not found"
-
-
-      - name: Run Behave tests (JUnit XML)
+      - name: Run Behave tests and generate JUnit report
         run: |
           mkdir -p reports
-          python3 -m behave \
-            --junit \
-            --junit-directory reports \
-            features/
+          behave --junit --junit-directory reports
 
-      - name: Show Behave output
-        run: |
-          echo "=== Behave output ==="
-          cat reports/*.xml || echo "No XML produced"
-
-
-      
-      - name: Debug JUnit XML
-        run: |
-          echo "XML files:"
-          ls -l reports
-          echo "Preview first XML:"
-          head -n 50 reports/*.xml
-
-
-      - name: Debug reports folder
-        run: |
-          echo "Reports directory content:"
-          ls -R "${{ github.workspace }}/reports"
-  
-
-      - name: Launchable record build
+      - name: Record test results in Launchable
         env:
           LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
         run: |
-          launchable record build --name github --build ${{ github.run_id }}
-
-      - name: Launchable record tests
-        env:
-          LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
-        run: |
-          launchable record tests behave reports/*.xml
-
+          launchable record tests behave reports/
