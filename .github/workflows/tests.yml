@@ -100,17 +100,17 @@ jobs:
       - name: Debug Launchable plugin folder
         run: |
           python3 - << 'EOF'
-        import launchable, os
-        import launchable.plugins.record
+          import launchable, os
+          import launchable.plugins.record
 
-        print("Launchable module:", launchable.__file__)
-        print("Record plugin:", launchable.plugins.record.__file__)
+          print("Launchable module:", launchable.__file__)
+          print("Record plugin:", launchable.plugins.record.__file__)
 
-        plugin_dir = os.path.dirname(launchable.plugins.record.__file__)
-        print("\nRecord plugin contents:")
-        for f in os.listdir(plugin_dir):
-          print(" -", f)
-        EOF
+          plugin_dir = os.path.dirname(launchable.plugins.record.__file__)
+          print("\nRecord plugin contents:")
+          for f in os.listdir(plugin_dir):
+            print(" -", f)
+          EOF
 
 
       - name: Launchable record build
