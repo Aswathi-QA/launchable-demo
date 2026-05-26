@@ -88,7 +88,7 @@ jobs:
           pip3 uninstall -y launchable || true
           rm -rf ${{ github.workspace }}/.venv/lib/python*/site-packages/launchable*
 
-     - name: Install known-good Launchable version
+      - name: Install known-good Launchable version
         run: |
           pip3 uninstall -y launchable || true
           rm -rf ${{ github.workspace }}/.venv/lib/python*/site-packages/launchable*
@@ -97,7 +97,7 @@ jobs:
       - name: Check Launchable version
         run: launchable --version
 
-    - name: Debug Launchable plugin folder
+      - name: Debug Launchable plugin folder
         run: |
           python3 - << 'EOF'
         import launchable, os
