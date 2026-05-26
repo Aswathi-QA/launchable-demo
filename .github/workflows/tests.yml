@@ -88,29 +88,30 @@ jobs:
           pip3 uninstall -y launchable || true
           rm -rf ${{ github.workspace }}/.venv/lib/python*/site-packages/launchable*
 
-      - name: Install known-good Launchable version
+      - name: Install Launchable CLI (correct package)
         run: |
-          pip3 uninstall -y launchable || true
+          pip3 uninstall -y launchable launchable-cli || true
           rm -rf ${{ github.workspace }}/.venv/lib/python*/site-packages/launchable*
-          pip3 install --no-cache-dir launchable==1.107.0
+          pip3 install --no-cache-dir launchable-cli
+
 
       - name: Check Launchable version
         run: launchable --version
 
       - name: Debug Launchable plugin folder
         run: |
-          python3 - << 'EOF'
-          import launchable, os
-          import launchable.plugins.record
+            python3 - << 'EOF'
+            import launchable, os
+            import launchable.plugins.record
 
-          print("Launchable module:", launchable.__file__)
-          print("Record plugin:", launchable.plugins.record.__file__)
+            print("Launchable module:", launchable.__file__)
+            print("Record plugin:", launchable.plugins.record.__file__)
 
-          plugin_dir = os.path.dirname(launchable.plugins.record.__file__)
-          print("\nRecord plugin contents:")
-          for f in os.listdir(plugin_dir):
-            print(" -", f)
-          EOF
+            plugin_dir = os.path.dirname(launchable.plugins.record.__file__)
+            print("\nRecord plugin contents:")
+            for f in os.listdir(plugin_dir):
+                print(" -", f)
+            EOF
 
 
       - name: Launchable record build
