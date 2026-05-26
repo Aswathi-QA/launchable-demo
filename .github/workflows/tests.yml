@@ -140,6 +140,6 @@ jobs:
 
       - name: Launchable record tests
         env:
-        LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
+          LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
         run: |
           python3 -m launchable record tests behave reports/*.xml
