@@ -106,7 +106,7 @@ jobs:
           python3 -m behave \
             --junit \
             --junit-directory reports \
-            features/ || true
+            features/
 
       - name: Show Behave output
         run: |
