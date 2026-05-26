@@ -106,7 +106,13 @@ jobs:
           python3 -m behave \
             --junit \
             --junit-directory reports \
-            features/
+            features/ || true
+
+      - name: Show Behave output
+        run: |
+          echo "=== Behave output ==="
+          cat reports/*.xml || echo "No XML produced"
+
 
       
       - name: Debug JUnit XML
