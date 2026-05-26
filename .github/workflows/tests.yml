@@ -1,45 +1,71 @@
-name: Run Behave Tests with Launchable
+name: Launchable Predictive Test Demo
 
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:
+  pull_request:
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout with full history (fixes Smart Tests warning)
       - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+        uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: "3.10"
 
       - name: Install dependencies
         run: |
-          pip install --upgrade pip
+          python3 -m venv .venv
+          source .venv/bin/activate
           pip install -r requirements.txt
-          pip install launchable
 
-      - name: Record build in Launchable
+      - name: Install Launchable CLI
+        run: |
+          curl -s https://get.launchableinc.com/cli | sh
+          echo "$HOME/.launchable/bin" >> $GITHUB_PATH
+
+      - name: Launchable record build
         env:
           LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
         run: |
-          launchable record build --name github-actions-${{ github.run_id }}
+          launchable record build \
+            --name github \
+            --build ${{ github.run_id }}
 
-      - name: Run Behave tests and generate JUnit report
+      - name: Run Behave tests (full run for training)
         run: |
-          mkdir -p reports
-          behave --junit --junit-directory reports
+          source .venv/bin/activate
+          behave --junit --junit-directory reports/
 
       - name: Launchable record tests
         env:
           LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
         run: |
-          launchable record tests behave reports/*.xml
+          launchable record tests \
+            --build ${{ github.run_id }} \
+            behave reports/
+
+      - name: Launchable subset
+        id: subset
+        env:
+          LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
+        run: |
+          launchable subset \
+            --build ${{ github.run_id }} \
+            --target 20% \
+            --output-file subset.txt
+
+      - name: Run subset of tests
+        run: |
+          source .venv/bin/activate
+          if [ -s subset.txt ]; then
+            behave --junit --junit-directory reports/ @subset.txt
+          else
+            echo "No subset returned, running full suite"
+            behave --junit --junit-directory reports/
+          fi
