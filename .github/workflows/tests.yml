@@ -57,24 +57,23 @@ jobs:
         run: rm -rf "${{ github.workspace }}/venv"
 
       - name: Create virtual environment
-        run: |
-          python3 -m venv .venv
+        run: python3 -m venv .venv
 
       - name: Activate venv for all steps
         run: echo "PATH=${{ github.workspace }}/.venv/bin:$PATH" >> $GITHUB_ENV
 
       - name: Install Python dependencies
         run: |
-          ./.venv/bin/pip3 install --upgrade pip
-          ./.venv/bin/pip3 install -r requirements.txt
+          pip3 install --upgrade pip
+          pip3 install -r requirements.txt
 
       - name: Install/Upgrade Launchable CLI
         run: |
-          ./.venv/bin/pip3 install --upgrade --force-reinstall launchable
+          pip3 install --upgrade --force-reinstall launchable
 
       - name: Check Launchable version
         run: |
-          ./.venv/bin/python3 -m launchable --version
+          python3 -m launchable --version
 
       - name: Run Behave tests (JUnit XML)
         run: |
