@@ -76,10 +76,12 @@ jobs:
           pip3 install --upgrade pip
           pip3 install -r requirements.txt
 
-      - name: Verify Behave installation
+      - name: Verify Behave dependencies
         run: |
-         pip3 show behave || echo "Behave NOT installed"
-
+          python3 - << 'EOF'
+          import colorama, parse, parse_type, six, tomli
+          print("All Behave dependencies import correctly")
+          EOF
 
       - name: Install/Upgrade Launchable CLI
         run: |
@@ -92,10 +94,11 @@ jobs:
       - name: Run Behave tests (JUnit XML)
         run: |
           mkdir -p reports
-          ./.venv/bin/python3 -m behave \
+          python3 -m behave \
             --junit \
             --junit-directory reports \
             features/
+
       
       - name: Debug JUnit XML
         run: |
