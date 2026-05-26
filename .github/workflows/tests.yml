@@ -134,12 +134,12 @@ jobs:
 
       - name: Launchable record build
         env:
-          LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
+        LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
         run: |
-          ./.venv/bin/python3 -m launchable record build --name github --build ${{ github.run_id }}
+          python3 -m launchable record build --name github --build ${{ github.run_id }}
 
       - name: Launchable record tests
         env:
-          LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
+        LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
         run: |
-          ./.venv/bin/python3 -m launchable record tests behave reports/*.xml
+        python3 -m launchable record tests behave reports/*.xml
