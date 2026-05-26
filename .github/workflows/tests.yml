@@ -83,7 +83,7 @@ jobs:
           print("All Behave dependencies import correctly")
           EOF
 
-      - name: Remove old Launchable installation
+      - name: Remove corrupted Launchable installation
         run: |
           pip3 uninstall -y launchable || true
           rm -rf ${{ github.workspace }}/.venv/lib/python*/site-packages/launchable*
@@ -98,16 +98,15 @@ jobs:
 
       - name: Debug Launchable plugin folder
         run: |
-          echo "Launchable installed at:"
           python3 - << 'EOF'
-          import launchable, pkgutil, os
+          import launchable, os
           import launchable.plugins.record
 
-          print("Launchable module path:", launchable.__file__)
-          print("Record plugin path:", launchable.plugins.record.__file__)
+          print("Launchable module:", launchable.__file__)
+          print("Record plugin:", launchable.plugins.record.__file__)
 
           plugin_dir = os.path.dirname(launchable.plugins.record.__file__)
-          print("\nContents of record plugin directory:")
+          print("\nRecord plugin contents:")
           for f in os.listdir(plugin_dir):
             print(" -", f)
           EOF
