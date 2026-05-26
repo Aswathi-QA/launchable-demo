@@ -128,9 +128,10 @@ jobs:
           echo "Reports directory content:"
           ls -R "${{ github.workspace }}/reports"
   
-      
-
-      
+      - name: Debug Launchable path
+        run: |
+          which launchable
+          launchable --version
 
       - name: Launchable record build
         env:
