@@ -109,7 +109,7 @@ jobs:
           plugin_dir = os.path.dirname(launchable.plugins.record.__file__)
           print("\nContents of record plugin directory:")
           for f in os.listdir(plugin_dir):
-          print(" -", f)
+            print(" -", f)
           EOF
 
       - name: Launchable record build
