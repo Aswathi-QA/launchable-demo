@@ -26,8 +26,16 @@ jobs:
 
       - name: Install Launchable CLI
         run: |
-          curl -s https://get.launchableinc.com/cli | sh
+          curl -s https://get.launchableinc.com/cli | sh || echo "Installer failed"
           echo "$HOME/.launchable/bin" >> $GITHUB_PATH
+
+      - name: Debug Launchable install
+        run: |
+          echo "PATH is: $PATH"
+          ls -R $HOME/.launchable || echo "Launchable folder missing"
+          which launchable || echo "launchable not in PATH"
+          find $HOME -maxdepth 4 -type f -name launchable || echo "Binary not found"
+
 
       - name: Launchable record build
         env:
