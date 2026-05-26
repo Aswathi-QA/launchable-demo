@@ -91,12 +91,14 @@ jobs:
         run: |
           python3 -m launchable --version
 
-      - name: Debug Behave project structure
+      - name: Debug Behave working directory
         run: |
-          echo "Listing project structure:"
-          ls -R .
-          echo "Listing features directory:"
-          ls -R features || echo "No features directory found"
+          echo "PWD: $(pwd)"
+          echo "Contents:"
+          ls -la
+          echo "Features directory:"
+          ls -la features || echo "features/ not found"
+
 
       - name: Run Behave tests (JUnit XML)
         run: |
