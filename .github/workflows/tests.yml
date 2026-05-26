@@ -58,28 +58,27 @@ jobs:
 
       - name: Create virtual environment
         run: |
-          python -m venv "${{ github.workspace }}/venv"
-          ls -la "${{ github.workspace }}/venv/bin"
+          python3 -m venv .venv
 
       
 
       - name: Install Python dependencies
         run: |
-          "${{ github.workspace }}/venv/bin/pip3" install --upgrade pip
-          "${{ github.workspace }}/venv/bin/pip3" install -r requirements.txt
+          ./.venv/bin/pip3 install --upgrade pip
+          ./.venv/bin/pip3 install -r requirements.txt
 
       - name: Install/Upgrade Launchable CLI
         run: |
-          "${{ github.workspace }}/venv/bin/pip3" install --upgrade --force-reinstall launchable
+          ./.venv/bin/pip3 install --upgrade --force-reinstall launchable
 
       - name: Check Launchable version
         run: |
-          "${{ github.workspace }}/venv/bin/python3" -m launchable --version
+          ./.venv/bin/python3 -m launchable --version
 
       - name: Run Behave tests (JUnit XML)
         run: |
           mkdir -p reports
-          "${{ github.workspace }}/venv/bin/python3" -m behave \
+          ./.venv/bin/python3 -m behave \
             --junit \
             --junit-directory reports \
             features/
@@ -105,10 +104,10 @@ jobs:
         env:
           LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
         run: |
-          "${{ github.workspace }}/venv/bin/python3" -m launchable record build --name github --build ${{ github.run_id }}
+          ./.venv/bin/python3 -m launchable record build --name github --build ${{ github.run_id }}
 
       - name: Launchable record tests
         env:
           LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
         run: |
-          "${{ github.workspace }}/venv/bin/python3" -m launchable record tests behave reports/*.xml
+          ./.venv/bin/python3 -m launchable record tests behave reports/*.xml
