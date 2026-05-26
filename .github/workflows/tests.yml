@@ -94,7 +94,32 @@ jobs:
 
       - name: Check Launchable version
         run: |
-          python3 -m launchable --version
+          launchable --version
+
+      - name: Debug Launchable plugin folder
+        run: |
+          echo "Launchable installed at:"
+          python3 - << 'EOF'
+          import launchable, pkgutil, os
+          import launchable.plugins.record
+
+          print("Launchable module path:", launchable.__file__)
+          print("Record plugin path:", launchable.plugins.record.__file__)
+
+          plugin_dir = os.path.dirname(launchable.plugins.record.__file__)
+          print("\nContents of record plugin directory:")
+          for f in os.listdir(plugin_dir):
+          print(" -", f)
+          EOF
+
+      - name: Launchable record build
+        env:
+          LAUNCHABLE_TOKEN: ${{ secrets.LAUNCHABLE_TOKEN }}
+        run: |
+          launchable record build --name github --build ${{ github.run_id }}
+
+
+
 
       - name: Debug Behave working directory
         run: |
